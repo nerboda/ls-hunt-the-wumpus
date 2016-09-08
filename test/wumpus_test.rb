@@ -1,6 +1,5 @@
 # wumpus_test.rb
 
-# gem 'minitest', '~> 5.4'
 require 'minitest/autorun'
 require "minitest/reporters"
 Minitest::Reporters.use!
