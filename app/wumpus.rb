@@ -1,8 +1,7 @@
 # wumpus.rb
 
 class WumpusGame
-  
-  
+
   attr_accessor :player, :map
   
   def initialize
@@ -13,6 +12,32 @@ class WumpusGame
   
   def place_player
     player.current_room = map.random_room
+  end
+
+  def player_action(action_choice)
+    if action_choice == 'm'
+      nearby_rooms_string + "Please choose a room to move to."
+    else
+      ""
+    end
+  end
+
+  def move_player(room_number)
+    if @player.current_room.adjoining_rooms.include?(room_number)
+      player.move(@map.rooms[room_number])
+      "You are now in room #{room_number}. " + 
+      nearby_rooms_string + 
+      "Do you want to move (m) or shoot (s)?"
+    else
+      "You cannot move there! " +
+      nearby_rooms_string +
+      "Please choose a room to move to."
+    end
+  end
+
+  def nearby_rooms_string
+    room_numbers = player.current_room.adjoining_rooms.join(', ')
+    "Adjoining rooms are #{room_numbers}. "
   end
 end
 
@@ -34,24 +59,23 @@ class Map
 
   def create_rooms
     rooms = {}
-    (1..20).each do |num| 
-      rooms[num] = Room.new(num, ADJOINING_ROOMS[num])
+    (1..20).each do |number| 
+      rooms[number] = Room.new(number, ADJOINING_ROOMS[number])
     end
     rooms
   end
   
   def random_room
-    number = rooms.keys.sample
-    rooms[number]
+    room_number = rooms.keys.sample
+    rooms[room_number]
   end
 end
 
 class Room
   attr_reader :adjoining_rooms, :number
   
-  def initialize(num, adjoining_rooms)
-    @number = num
-    @adjoining_rooms = adjoining_rooms
+  def initialize(room_number, adjoining_rooms)
+    @room_number, @adjoining_rooms = room_number, adjoining_rooms
   end
   
 end
@@ -62,17 +86,8 @@ class Player
   def initialize
     @current_room = nil
   end
-  
-  def action(choice)
-    if choice == 'move'
-      nearby_rooms_string + "Please choose a room to move to."
-    else
-      ""
-    end
-  end
-  
-  def nearby_rooms_string
-    room_numbers = current_room.adjoining_rooms.join(', ')
-    "Adjoining rooms are #{room_numbers}. "
+
+  def move(room)
+    @current_room = room
   end
 end

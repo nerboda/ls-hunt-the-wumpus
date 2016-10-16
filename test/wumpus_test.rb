@@ -48,7 +48,7 @@ class WumpusTest < Minitest::Test
   def test_move_options_room_1
     # skip
     @player.current_room = @map.rooms[1]
-    action_response = @player.action('move')
+    action_response = @game.player_action('m')
     expected_response = "Adjoining rooms are 2, 5, 8. " + 
       "Please choose a room to move to."
 
@@ -58,7 +58,7 @@ class WumpusTest < Minitest::Test
   def test_move_options_room_2
     # skip
     @player.current_room = @map.rooms[2]
-    action_response = @player.action('move')
+    action_response = @game.player_action('m')
     expected_response = "Adjoining rooms are 1, 3, 10. " + 
       "Please choose a room to move to."
 
@@ -66,34 +66,34 @@ class WumpusTest < Minitest::Test
   end
 
   def test_valid_move_room_1_to_2
-    skip
+    # skip
     @player.current_room = @map.rooms[1]
-    move_response = @player.move(2)
+    move_response = @game.move_player(2)
     expected_response = "You are now in room 2. " + 
-      "Adjoining rooms are 2, 5 and 8. " + 
+      "Adjoining rooms are 1, 3, 10. " + 
       "Do you want to move (m) or shoot (s)?"
 
     assert_equal expected_response, move_response
   end
 
   def test_valid_move_room_19_to_20
-    skip
+    # skip
     @player.current_room = @map.rooms[19]
-    move_response = @player.move(20)
+    move_response = @game.move_player(20)
     expected_response = "You are now in room 20. " +
-      "Adjoining rooms are 11, 17 and 19. " +
+      "Adjoining rooms are 11, 17, 19. " +
       "Do you want to move (m) or shoot (s)?"
 
     assert_equal expected_response, move_response
   end
 
   def test_invalid_move_room_1_to_20
-    skip
+    # skip
     @player.current_room = @map.rooms[1]
-    move_response = @player.move(20)
-    expected_response = "You cannot move there! "
-      + "Adjoining rooms are 11, 17 and 19. "
-      + "Please choose a room to move to."
+    move_response = @game.move_player(20)
+    expected_response = "You cannot move there! " +
+      "Adjoining rooms are 2, 5, 8. " +
+      "Please choose a room to move to."
 
     assert_equal expected_response, move_response
   end
