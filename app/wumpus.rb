@@ -11,7 +11,7 @@ class WumpusGame
   end
   
   def place_player
-    player.current_room = map.random_room
+    player.current_room = map.empty_rooms.sample
   end
 
   def player_action(action_choice)
@@ -54,7 +54,11 @@ class Map
   
   def initialize
     @rooms = create_rooms
-    # place_hazards
+    place_hazards
+  end
+
+  def empty_rooms
+    rooms.values.select { |room| room.safe? }
   end
 
   def create_rooms
@@ -65,19 +69,39 @@ class Map
     rooms
   end
   
-  def random_room
-    room_number = rooms.keys.sample
-    rooms[room_number]
+  def place_hazards
+    hazards = [:pit, :pit, :bat, :bat, :wumpus]
+    
+    empty_rooms.sample(5).each do |room|
+      type = hazards.pop
+      room.hazard = type
+    end
   end
 end
 
 class Room
   attr_reader :adjoining_rooms, :number
-  
+  attr_accessor :hazard
+
   def initialize(room_number, adjoining_rooms)
     @room_number, @adjoining_rooms = room_number, adjoining_rooms
   end
-  
+
+  def has_pit?
+    hazard == :pit
+  end
+
+  def has_bat?
+    hazard == :bat
+  end
+
+  def has_wumpus?
+    hazard == :wumpus
+  end
+
+  def safe?
+    !hazard
+  end
 end
 
 class Player
