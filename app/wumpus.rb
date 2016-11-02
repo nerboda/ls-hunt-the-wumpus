@@ -27,7 +27,7 @@ class WumpusGame
       display_current_room
       choice = player_choice
       move_or_shoot(choice)
-      display_outcome
+      display_move_outcome if choice == 'm'
       update_result
       break if game_over?
       nearby_room_messages
@@ -69,12 +69,12 @@ class WumpusGame
     animate('>>>--------~>')
   end
 
-  def display_outcome
-    fancy_output player.current_room.outcome[:message]
+  def display_move_outcome
+    fancy_output player.current_room.move_outcome[:message]
   end
 
   def update_result
-    outcome = player.current_room.outcome
+    outcome = player.current_room.move_outcome
     
     if outcome[:result] == :dead
       player.kill
