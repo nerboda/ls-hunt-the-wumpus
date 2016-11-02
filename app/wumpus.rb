@@ -81,6 +81,8 @@ class WumpusGame
     elsif outcome[:result] == :carried
       new_room = @map.rooms(rand(1..20))
       player.move(new_room)
+      display_move_outcome
+      update_result
     end
   end
 
