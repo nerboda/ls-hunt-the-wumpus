@@ -20,7 +20,7 @@ class Room
     @hazard = hazard
   end
 
-  def outcome
+  def move_outcome
     case hazard
     when :bat
       { result: :carried, message: 'You were carried by bats to another room.' }
