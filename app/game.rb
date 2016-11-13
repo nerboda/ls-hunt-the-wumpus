@@ -1,63 +1,41 @@
+# game.rb
+
 require_relative 'map'
 require_relative 'player'
 
+# List of possible game states:
+# :new_game, :out_of_arrows, :killed_by_wumpus, :killed_wumpus,
+# :missed_wumpus, :safe_room, :carried_by_bats, :fell_into_pit
 class Game
-  attr_reader :player, :wumpus, :map
+  attr_reader :player, :map, :state
 
   def initialize
     @map = Map.new
     @player = Player.new
-    @wumpus = nil
+    @state = :new_game
+
     place_player
   end
 
   def move_player(room_number)
     room = map.rooms(room_number)
     player.move(room)
-    update_result
+    @state = player_current_room.result_of_entering
   end
 
   def shoot_arrow(room_number)
     player.shoot
-    room = map.rooms(room_number)
-    result_of_shot = room.incoming_arrow
-    @wumpus = :dead if result_of_shot == :hit
-    update_result
-  end
-
-  def move_outcome_message
-    player.current_room.move_outcome[:message]
-  end
-
-  def update_result
-    outcome = player.current_room.move_outcome
-    
-    if outcome[:result] == :dead
-      player.kill
-    elsif outcome[:result] == :carried
-      new_room = @map.rooms(rand(1..20))
-      player.move(new_room)
-      update_result
-    end
-  end
-
-  def nearby_room_messages
-    messages = adjoining_rooms.map(&:message)
-    messages.compact.uniq
+    hazard = map.rooms(room_number).hazard
+    @state = result_of_shot(hazard)
   end
 
   def over?
-    player.dead? || player.out_of_arrows? || wumpus == :dead
+    game_ending_states = [:killed_wumpus, :out_of_arrows,
+                          :fell_into_pit, :killed_by_wumpus]
+    game_ending_states.include?(state)
   end
 
-  def final_result
-    if player.out_of_arrows?
-      'You ran out of arrows and lost the game.'
-    elsif wumpus == :dead
-      'You killed the Wumpus and won the game.'
-    end
-  end
-
+  # A couple wrappers so calling objects don't have to chain method calls
   def player_current_room
     player.current_room
   end
@@ -66,6 +44,7 @@ class Game
     player.can_shoot?
   end
 
+  # Methods for getting information about surrounding rooms
   def adjoining_rooms(room_number = nil)
     if room_number
       rooms = @map.rooms(room_number).adjoining_rooms
@@ -75,7 +54,28 @@ class Game
     end
   end
 
+  def rooms_within_range(distance)
+    room_number = player_current_room.number
+    within_range = map.rooms_within_range([room_number], distance)
+    within_range.map(&:to_s)
+  end
+
+  def nearby_room_messages
+    messages = adjoining_rooms.map(&:nearby_message)
+    messages.compact.uniq
+  end
+
   private
+
+  def result_of_shot(hazard)
+    return :killed_wumpus if hazard == :wumpus
+
+    if player.out_of_arrows?
+      :out_of_arrows
+    else
+      :missed_wumpus
+    end
+  end
 
   def place_player
     starting_room = @map.empty_rooms.sample
