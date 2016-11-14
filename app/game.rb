@@ -17,10 +17,13 @@ class Game
     place_player
   end
 
-  def move_player(room_number)
-    room = map.rooms(room_number)
+  # Moves player to random room if room_number argument is nil
+  # Otherwise moves to the specified room.
+  def move_player(room_number = nil)
+    room = [map.rooms(room_number)].flatten.sample
     player.move(room)
-    @state = player_current_room.result_of_entering
+    outcome = player_current_room.result_of_entering
+    @state = carried_by_bats? ? [:carried_by_bats, outcome] : outcome
   end
 
   def shoot_arrow(room_number)
@@ -63,6 +66,10 @@ class Game
   def nearby_room_messages
     messages = adjoining_rooms.map(&:nearby_message)
     messages.compact.uniq
+  end
+
+  def carried_by_bats?
+    state == :carried_by_bats
   end
 
   private

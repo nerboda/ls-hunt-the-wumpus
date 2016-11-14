@@ -17,14 +17,12 @@ class WumpusGame
   def start
     display_welcome_message
     enter_to_continue
-    display_nearby_room_messages
-    loop do
+    until @game.over?
+      display_nearby_room_messages
       display_current_room
       choice = player_move_choice
       choice == 'm' ? player_move : player_shoot
       display_move_outcome
-      break if @game.over?
-      display_nearby_room_messages
     end
     display_goodbye_message
   end
@@ -32,12 +30,9 @@ class WumpusGame
   private
 
   def player_move_choice
-    if @game.player_can_shoot?
-      message = move_choice_message
-      get_input(message, choices: %w(m s))
-    else
-      'm'
-    end
+    return 'm' unless @game.player_can_shoot?
+    message = move_choice_message
+    get_input(message, choices: %w(m s))
   end
 
   def player_move
@@ -45,6 +40,8 @@ class WumpusGame
     message = pick_a_room_message(room_choices.join(', '))
     room_number = get_input(message, choices: room_choices, number: true)
     @game.move_player(room_number)
+
+    @game.move_player if @game.carried_by_bats?
   end
 
   # Methods related to Shooting an Arrow
@@ -78,7 +75,8 @@ class WumpusGame
   end
 
   def display_move_outcome
-    send("display_#{@game.state}_message")
+    outcomes = [@game.state].flatten
+    outcomes.each { |outcome| send("display_#{outcome}_message") }
   end
 end
 
