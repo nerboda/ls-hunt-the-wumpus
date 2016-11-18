@@ -1,3 +1,5 @@
+# room.rb
+
 # A Room that holds Hazard objects
 class Room
   attr_reader :number, :hazard, :adjoining_rooms

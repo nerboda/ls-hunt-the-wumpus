@@ -1,4 +1,5 @@
 # messages.rb
+
 require 'yaml'
 
 # Overwrites method_missing to catch message related method calls and
@@ -7,7 +8,7 @@ require 'yaml'
 # => welcome_message: Returns "Welcome to Hunt the Wumpus!"
 # => display_welcome_message: Outputs "Welcome to Hunt the Wumpus!", returns nil
 module Messages
-  MESSAGES = YAML.load_file('messages.yaml')
+  MESSAGES = YAML.load_file('assets/messages.yaml')
 
   def method_missing(symbol, *args)
     method_name = parse_method_name(symbol)

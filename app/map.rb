@@ -1,3 +1,5 @@
+# map.rb
+
 require_relative 'room'
 
 # A Map that holds Room objects
