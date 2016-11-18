@@ -1,5 +1,6 @@
 welcome: Welcome to Hunt the Wumpus!
 goodbye: Thanks for Playing Hunt the Wumpus. Goodbye!
+instructions: Display instructions for the game? (Y/N)
 move_choice: "What would you like to do? (s)hoot or (m)ove:"
 pick_a_room: "Pick a room to move to:"
 shot_distance: Choose a shot distance in number of rooms from 1-3

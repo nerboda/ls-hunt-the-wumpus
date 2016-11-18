@@ -1,3 +1,5 @@
+# player.rb
+
 # A Player that moves around Rooms in a Map
 class Player
   attr_reader :current_room
