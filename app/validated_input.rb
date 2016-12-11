@@ -14,7 +14,7 @@ module ValidatedInput
 
     puts message
     loop do
-      input = gets.chomp.strip
+      input = gets.chomp.strip.downcase
       break if valid?(input, options)
       puts error_message
     end
@@ -34,6 +34,6 @@ module ValidatedInput
 
   def valid?(input, options)
     choices = options[:choices]
-    choices.map(&:downcase).include? input.downcase
+    choices.map(&:downcase).include? input
   end
 end
